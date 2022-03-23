@@ -1,4 +1,4 @@
-Q: What's pupose of docker-compose?
+Q: What's the pupose of docker-compose?
 A: It's use to automate deployment of application.
 ------------------------------------------------------------
 Q: Create a compose file for project 'X-app' that build and deploy from current directory:
