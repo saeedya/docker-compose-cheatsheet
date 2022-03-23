@@ -1,0 +1,71 @@
+Q: What's pupose of docker-compose?
+A: It's use to automate deployment of application.
+------------------------------------------------------------
+Q: Create a compose file for project 'X-app' that build and deploy from current directory:
+A:
+  version: !!str 3
+  services:
+    X-app:
+      build: .
+-------------------------------------------------------------------------------------------
+Q: Create a compose file to deploy MySQl and PhpMyAdmin(http://localhost:8082):
+A:
+  version: !!str 3
+  services:
+    db:
+      image: mysql:8
+      container_name: db
+      restart: unless-stopped
+      environment:
+        - MYSQL_ROOT_PASSWORD=my_secret_password
+        - MYSQL_DATABASE=app_db
+        - MYSQL_USER=db_user
+        - MYSQL_PASSWORD=db_user_pass
+      ports:
+        - 33060:3306
+      labels:
+        - app.docker.io=mysql
+        - app.docker.io/env=production
+        - app.docker.io/part-of=mysql-phpmyadmin-stack
+        - app.docker.io/created-by=saeedyasrebi
+      volumes:
+        - dbdata:/var/lib/mysql
+    phpmyadmin:
+      image: phpmyadmin:latest
+      container_name: pma
+      depends_on:
+        - db
+      links:
+        - db
+      environment:
+        PMA_HOST: db
+        PMA_PORT: 3306
+        PMA_ARBITARY: 1
+      labels:
+        - app.docker.io=pma
+        - app.docker.io/env=production
+        - app.docker.io/part-of=mysql-phpmyadmin-stack
+        - app.docker.io/created-by=saeedyasrebi
+      restart: always
+      ports:
+        - 8082:80         # For accessing on localhost
+volumes:
+  dbdata:
+---------------------------------------------------------------------------------------------------------
+Q: Imagine you had create a bridged network before, how could you use it into last question?
+A:
+  - network creation : docker create mysql-phpmyadmin
+  
+  - Adding below lines to above docker-compose file
+      networks:
+        default:
+          external:
+            name: mysql-phpmyadmin
+----------------------------------------------------------------------------------------------------------
+Q: Create 5 replicas from redis:
+A: docker-compose up --scale redis=5 -d
+----------------------------------------------------------------------------------------------------------
+Q: How can you see stack log of redis docker-compose?
+A: docker-compose logs -f redis
+
+  
